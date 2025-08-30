@@ -1,0 +1,98 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - path: data/raw/fitness_dataset.csv
+      hash: md5
+      md5: b4bc0bfd2f2747e9caae7f07c6e06d90
+      size: 83691
+    - path: src/preprocess.py
+      hash: md5
+      md5: e235661ec1a5ae8ac09cd5669db03368
+      size: 1628
+    params:
+      params.yaml:
+        data.age_bins:
+        - 0
+        - 2
+        - 5
+        - 12
+        - 18
+        - 30
+        - 60
+        - 100
+        data.age_labels:
+        - Infant
+        - Toddler
+        - Child
+        - Teen
+        - Young Adult
+        - Adult
+        - Senior
+        data.input: data/raw/fitness_dataset.csv
+        data.max_iter: 10
+        data.output: data/preprocessed/fitness_dataset_processed.csv
+        data.random_state: 0
+    outs:
+    - path: data/preprocessed/fitness_dataset_processed.csv
+      hash: md5
+      md5: 663b7b3ad77f68013115b10abadf1ae3
+      size: 102477
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/preprocessed/fitness_dataset_processed.csv
+      hash: md5
+      md5: 663b7b3ad77f68013115b10abadf1ae3
+      size: 102477
+    - path: src/train.py
+      hash: md5
+      md5: 728f4abba5e24c7c2e9b0cdcf39716c3
+      size: 2089
+    params:
+      params.yaml:
+        train.X_test: test/X_test.csv
+        train.input: data/preprocessed/fitness_dataset_processed.csv
+        train.output: models/model.pkl
+        train.random_state: 42
+        train.stratify: y
+        train.test_size: 0.2
+        train.y_test: test/Y_test.csv
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 4fdf0649ef727a006f8d771e0cf90b63
+      size: 1080
+    - path: test/X_test.csv
+      hash: md5
+      md5: 0d140900a9e4b84ec366255b6fda2dbd
+      size: 19768
+    - path: test/Y_test.csv
+      hash: md5
+      md5: 9d559063d1c737da68e1aa58f422dd6b
+      size: 807
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: models/model.pkl
+      hash: md5
+      md5: 4fdf0649ef727a006f8d771e0cf90b63
+      size: 1080
+    - path: src/evaluate.py
+      hash: md5
+      md5: 99aebb016fa7d3898e4955decc73598f
+      size: 1427
+    - path: test/X_test.csv
+      hash: md5
+      md5: 0d140900a9e4b84ec366255b6fda2dbd
+      size: 19768
+    - path: test/Y_test.csv
+      hash: md5
+      md5: 9d559063d1c737da68e1aa58f422dd6b
+      size: 807
+    params:
+      params.yaml:
+        evaluate.X_test: test/X_test.csv
+        evaluate.Y_test: test/Y_test.csv
+        evaluate.model_path: models/model.pkl

@@ -1,0 +1,43 @@
+stages:
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - data/raw/fitness_dataset.csv
+    - src/preprocess.py
+    params:
+    - data.input
+    - data.output
+    - data.age_bins
+    - data.age_labels
+    - data.max_iter
+    - data.random_state
+    outs:
+    - data/preprocessed/fitness_dataset_processed.csv
+  train:
+    cmd: python src/train.py
+    deps:
+    - data/preprocessed/fitness_dataset_processed.csv
+    - src/train.py
+    params:
+    - train.input
+    - train.output
+    - train.X_test
+    - train.y_test
+    - train.test_size
+    - train.random_state
+    - train.stratify
+    outs:
+    - models/model.pkl
+    - test/X_test.csv
+    - test/Y_test.csv
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - test/X_test.csv
+    - test/Y_test.csv
+    - models/model.pkl
+    - src/evaluate.py
+    params:
+    - evaluate.X_test
+    - evaluate.Y_test
+    - evaluate.model_path

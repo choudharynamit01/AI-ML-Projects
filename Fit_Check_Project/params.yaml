@@ -1,0 +1,21 @@
+data:
+   input: "data/raw/fitness_dataset.csv"
+   output: "data/preprocessed/fitness_dataset_processed.csv"
+   age_bins : [0, 2, 5, 12, 18, 30, 60, 100]
+   age_labels : ['Infant', 'Toddler', 'Child', 'Teen', 'Young Adult', 'Adult', 'Senior']
+   max_iter: 10
+   random_state: 0
+
+train:
+   input: "data/preprocessed/fitness_dataset_processed.csv"
+   output: "models/model.pkl"
+   X_test: "test/X_test.csv"
+   y_test: "test/Y_test.csv"
+   test_size: 0.2
+   random_state: 42
+   stratify: y
+
+evaluate:
+   X_test: test/X_test.csv
+   Y_test: test/Y_test.csv
+   model_path: "models/model.pkl"
